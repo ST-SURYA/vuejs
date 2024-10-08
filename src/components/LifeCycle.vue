@@ -4,6 +4,7 @@
         <p>Count: {{ count }}</p>
         <p>User Name: {{ userObj.name }}</p>
         <p>User Age: {{ userObj.age }} <input type="number" v-model="userObj.age"></p>
+        <p>Emit Event :<input type="text" @keyup="checkEmifunction" /></p>
         <button @click="incrementCount">Increment Count</button>
         <button @click="updateduser">Update user age</button>
         <button @click="stopWatcher">Stop Watcher</button>
@@ -83,6 +84,9 @@ export default {
         stopWatcher() {
             console.log("stopWatch")
             this.userObjWatch();
+        },
+        checkEmifunction(e) {
+            this.$emit("emit-event", e.target.value);
         }
     },
 };  

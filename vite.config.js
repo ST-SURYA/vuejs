@@ -12,15 +12,19 @@ export default defineConfig({
   server: {
     proxy: {
       "/scorm-content": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
       "/scorm": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+      "/storage": {
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
       "/upload-scorm": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8000",
         changeOrigin: true,
       },
     },

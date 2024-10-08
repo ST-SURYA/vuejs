@@ -1,5 +1,6 @@
 <script>
 import AdminUploadScorm from './components/AdminUploadScorm.vue';
+import CompositionLifeCycle from './components/CompositionLifeCycle.vue';
 import HelloWorld from './components/HelloWorld.vue'
 import LifeCycle from './components/LifeCycle.vue';
 import PipScorm from './components/PipScorm.vue';
@@ -13,6 +14,7 @@ export default {
   name: 'App',
   components: {
     LifeCycle,
+    CompositionLifeCycle,
     SCORMAPI,
     AdminUploadScorm
   },
@@ -25,22 +27,26 @@ export default {
     toggleLifecycleComponent() {
       this.showLifecycle = !this.showLifecycle; // Toggles the display of the LifeCycle component  
     },
+    checkEmifunction(value) {
+      console.log('value from child',value);
+    }
   },
 };  
 
 </script>
 
 <template>
-  <!-- For Life cycle of hook -->
-  <!-- <LifeCycle v-if="showLifecycle" />
-  <button @click="toggleLifecycleComponent">Toggle LifeCycle Component</button> -->
+  For Life cycle of hook
+  <!-- <LifeCycle v-if="showLifecycle" @emit-event="checkEmifunction" /> -->
+  <CompositionLifeCycle v-if="showLifecycle" @emit-event="checkEmifunction" />
+  <button @click="toggleLifecycleComponent">Toggle LifeCycle Component</button>
 
   <!-- <Rustici />  -->
   <!-- <Scorm/> -->
   <!-- <PipScorm/> -->
   <!-- <ScormAgain/> -->
-  <AdminUploadScorm/>
-  <SCORMAPI />
+  <!-- <AdminUploadScorm/> -->
+  <!-- <SCORMAPI /> -->
 </template>
 
 <style scoped>

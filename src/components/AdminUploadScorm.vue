@@ -47,34 +47,33 @@ export default {
         },
 
         // Upload SCORM file to backend
-        async uploadScorm() {
-            if (!this.scormFile) {
-                this.uploadErrorMessage = 'No file selected.';
-                return;
-            }
-
+        uploadScorm() {
             const formData = new FormData();
             formData.append('scorm', this.scormFile);
-
-            try {
-                const response = await fetch('/upload-scorm', {
-                    method: 'POST',
-                    body: formData,
+            fetch('/upload-scorm', {
+                method: 'POST',
+                body: formData,
+                // headers: {
+                //     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                // }
+            }).then((res) => {
+                console.log('File uploaded', res.json());
+            });
+        },
+        loadCourse(scormId) {
+            fetch(`/scorm/view/${scormId}`)
+                .then((response) => {
+                    if (response.ok) {
+                        this.scormUrl = `/storage/scorm/${scormId}/index.html`;
+                        this.course = `course${scormId}`;
+                        this.initializeSCORM();
+                    } else {
+                        alert("SCORM package not found.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error loading SCORM content:", error);
                 });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    this.uploadSuccessMessage = `SCORM package uploaded successfully. View the course: ${result.url}`;
-                    this.uploadErrorMessage = '';
-                    this.scormFile = null;
-                } else {
-                    throw new Error('Failed to upload SCORM package.');
-                }
-            } catch (error) {
-                console.error('Error during SCORM file upload:', error);
-                this.uploadErrorMessage = 'An error occurred while uploading the SCORM file.';
-                this.uploadSuccessMessage = '';
-            }
         },
     },
 };

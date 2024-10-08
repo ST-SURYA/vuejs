@@ -12,10 +12,15 @@
     "@szenadam/scorm-api-wrapper": "^1.1.1",
     "pipwerks-scorm-api-wrapper": "^0.1.2",
     "scorm-again": "^1.7.1",
-    "vue": "^3.4.29"
+    "vue": "^3.4.29",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/node": "^22.6.1",
     "@vitejs/plugin-vue": "^5.0.5",
+    "@vue/cli-plugin-typescript": "^5.0.8",
+    "@vue/runtime-dom": "^3.5.8",
+    "typescript": "^5.6.2",
     "vite": "^5.3.1"
   }
 }

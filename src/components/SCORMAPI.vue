@@ -1,8 +1,9 @@
 <template>
     <div>
-        <!-- <h2>Upload SCORM</h2>
+        <h2>Upload SCORM</h2>
         <input type="file" @change="handleFileChange" />
-        <button @click="uploadFile">Upload</button> -->
+        <button @click="uploadFile">Upload</button>
+
         <h2>SCORM Player</h2>
         <button @click="loadCourse('115')">Course 1</button>
         <button @click="loadCourse('116')">Course 2</button>
@@ -15,38 +16,64 @@
 </template>
 
 <script>
-import pipwerks from 'pipwerks-scorm-api-wrapper';
+import pipwerks from "pipwerks-scorm-api-wrapper";
 
 export default {
     data() {
         return {
-            scormUrl: '', // SCORM content URL
-            course: '',    // Current course identifier
-            scormFile: null // SCORM file
+            scormUrl: "", // SCORM content URL
+            course: "", // Current course identifier
+            scormFile: null, // SCORM file for upload
         };
     },
     methods: {
         handleFileChange(event) {
             const file = event.target.files[0];
-            if (file && file.type === 'application/zip') {
+            if (file && file.type === "application/zip") {
                 this.scormFile = file;
             } else {
                 this.scormFile = null;
+                alert("Please select a valid SCORM zip file");
             }
         },
-        uploadFile() { 
+        uploadFile() {
+            if (!this.scormFile) {
+                alert("No file selected for upload");
+                return;
+            }
+
             const formData = new FormData();
-            formData.append('scorm', this.scormFile);
-            fetch('/upload-scorm', { method: 'POST', body: formData }).then((res) => {
-                console.log('File uploaded', res.json());
+            formData.append("scorm", this.scormFile);
+
+            fetch("/upload-scorm", {
+                method: "POST",
+                body: formData,
+                // headers: {
+                //     "X-CSRF-TOKEN": document
+                //         .querySelector('meta[name="csrf-token"]')
+                //         .getAttribute("content"),
+                // },
             })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.url) {
+                        alert("File uploaded successfully");
+                        console.log(data);
+                    } else {
+                        alert("Failed to upload file");
+                        console.log(data);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error during upload:", error);
+                });
         },
-        // Load SCORM course dynamically
         loadCourse(scormId) {
             fetch(`/scorm/view/${scormId}`)
                 .then((response) => {
                     if (response.ok) {
-                        this.scormUrl = `/scorm-content/${scormId}/index.html`;
+                        this.scormUrl = `/storage/scorm/${scormId}/index.html`;
+
                         this.course = `course${scormId}`;
                         this.initializeSCORM();
                     } else {
@@ -57,10 +84,8 @@ export default {
                     console.error("Error loading SCORM content:", error);
                 });
         },
-
-        // Inject Mock SCORM API into the parent window
         injectScormAPI() {
-            const courseName = this.course; // Save reference for the closure
+            const courseName = this.course;
             window.API = {
                 LMSInitialize: function () {
                     console.log("LMS initialized");
@@ -71,12 +96,12 @@ export default {
                     return "true";
                 },
                 LMSGetValue: function (param) {
-                    const value = JSON.parse(localStorage.getItem(courseName) || '{}');
+                    const value = JSON.parse(localStorage.getItem(courseName) || "{}");
                     console.log(`Retrieved ${param} from localStorage: ${value[param]}`);
                     return value[param] || "";
                 },
                 LMSSetValue: function (param, value) {
-                    const val = JSON.parse(localStorage.getItem(courseName) || '{}');
+                    const val = JSON.parse(localStorage.getItem(courseName) || "{}");
                     const newCheckPoint = { ...val, [param]: value };
                     localStorage.setItem(courseName, JSON.stringify(newCheckPoint));
                     console.log(`Stored ${param} in localStorage: ${value}`);
@@ -98,8 +123,6 @@ export default {
             };
             console.log("Mock SCORM API injected into window");
         },
-
-        // Initialize SCORM communication using Pipwerks
         initializeSCORM() {
             this.injectScormAPI(); // Inject API into window
             pipwerks.SCORM.version = "1.2"; // Set SCORM version
@@ -122,3 +145,19 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+h2 {
+    margin-top: 20px;
+}
+
+button {
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+iframe {
+    margin-top: 20px;
+    border: 1px solid #ccc;
+}
+</style>
