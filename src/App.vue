@@ -39,9 +39,11 @@ export default {
   For Life cycle of hook
 
   <h1>Option API</h1>
+
   <LifeCycle v-if="showLifecycle" @emit-event="checkEmifunction" />
 
   <h1>composition API</h1>
+  
   <CompositionLifeCycle v-if="showLifecycle" @emit-event="checkEmifunction" />
   <button @click="toggleLifecycleComponent">Toggle LifeCycle Component</button>
 
